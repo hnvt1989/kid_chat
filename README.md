@@ -1,6 +1,6 @@
 # Kid Chat - Whiskers the Talking Cat
 
-A friendly chat application featuring Whiskers, a talking cat who loves chatting with children age 6-8.
+A friendly chat application featuring Whiskers, a playful cat who chats with kids ages 6-8 using short, fun, and upbeat messages.
 
 ## Setup
 

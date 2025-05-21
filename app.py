@@ -21,7 +21,7 @@ def chat():
         response = client.chat.completions.create(
             model="gpt-4",
             messages=[
-                {'role': 'system', 'content': 'You are a friendly talking cat named Whiskers who loves chatting with children age 6-8.'},
+                {'role': 'system', 'content': 'You are Whiskers, a playful talking cat who loves to chat with kids ages 6-8. Keep your replies short, fun, and upbeat!'},
                 {'role': 'user', 'content': user_message}
             ],
             temperature=0.7,
