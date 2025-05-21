@@ -8,39 +8,262 @@
 </head>
 <body>
     <div class="container">
-        <h1>Chat with Whiskers!</h1>
+        <h1>Chat with Whiskers! 🐱</h1>
         <div class="cat-emoji">🐱</div>
         <div id="chatbox" class="chatbox"></div>
-        <textarea id="message" placeholder="Type your message here..."></textarea>
-        <div class="buttons">
-            <button id="speak">Speak</button>
-            <button id="stop">Stop</button>
+        <div id="loading" class="loading" style="display: none;">
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea id="message" placeholder="Type your message here..." maxlength="200" readonly></textarea>
+                <button id="mic" class="mic-button" title="Click to start/stop listening">
+                    🎤
+                </button>
+            </div>
+            <div class="buttons">
+                <button id="stop" disabled>Stop</button>
+                <button id="clear">Clear Chat</button>
+            </div>
         </div>
     </div>
 
     <script>
     const chatbox = document.getElementById('chatbox');
     const messageInput = document.getElementById('message');
-    const speakBtn = document.getElementById('speak');
+    const stopBtn = document.getElementById('stop');
+    const clearBtn = document.getElementById('clear');
+    const micBtn = document.getElementById('mic');
+    const loading = document.getElementById('loading');
 
-    speakBtn.addEventListener('click', () => {
-        const text = messageInput.value;
-        if (!text) return;
-        chatbox.innerHTML += `<div class='user'>You: ${text}</div>`;
-        fetch('/chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({message: text})
-        }).then(res => res.json()).then(data => {
-            chatbox.innerHTML += `<div class='whiskers'>Whiskers: ${data.reply}</div>`;
-            chatbox.scrollTop = chatbox.scrollHeight;
-        }).catch(() => {
-            chatbox.innerHTML += `<div class='whiskers'>Whiskers: Sorry, something went wrong.</div>`;
-        });
+    // Initialize speech synthesis
+    const synth = window.speechSynthesis;
+    let currentUtterance = null;
+    let isSpeaking = false;
+
+    // Check if browser supports speech recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let isListening = false;
+    let finalTranscript = '';
+    let interimTranscript = '';
+
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => {
+            micBtn.classList.add('listening');
+            isListening = true;
+            messageInput.placeholder = "Listening...";
+        };
+
+        recognition.onresult = (event) => {
+            // Don't process results while Whiskers is speaking
+            if (isSpeaking) return;
+
+            interimTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript = transcript;
+                    messageInput.value = finalTranscript;
+                    // Automatically send the message when final transcript is received
+                    sendMessage(finalTranscript);
+                } else {
+                    interimTranscript += transcript;
+                    messageInput.value = interimTranscript;
+                }
+            }
+        };
+
+        recognition.onend = () => {
+            if (isListening && !isSpeaking) {
+                // Restart recognition if we're still supposed to be listening and not speaking
+                try {
+                    recognition.start();
+                } catch (error) {
+                    console.error('Error restarting speech recognition:', error);
+                }
+            } else {
+                micBtn.classList.remove('listening');
+                messageInput.placeholder = "Type your message here...";
+            }
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+            if (event.error === 'no-speech') {
+                // Ignore no-speech errors as they're common
+                return;
+            }
+            micBtn.classList.remove('listening');
+            isListening = false;
+            addMessage('Sorry, I had trouble understanding you. Please try again.');
+        };
+    } else {
+        micBtn.style.display = 'none';
+        console.warn('Speech recognition not supported in this browser');
+    }
+
+    function speak(text) {
+        // Cancel any ongoing speech
+        if (currentUtterance) {
+            synth.cancel();
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Configure voice settings
+        utterance.rate = 1.0;  // Speed
+        utterance.pitch = 1.1; // Slightly higher pitch for a more friendly sound
+        utterance.volume = 1.0;
+
+        // Try to find a female voice
+        const voices = synth.getVoices();
+        const femaleVoice = voices.find(voice => 
+            voice.name.includes('Female') || 
+            voice.name.includes('female') ||
+            voice.name.includes('Samantha')
+        );
+        if (femaleVoice) {
+            utterance.voice = femaleVoice;
+        }
+
+        // Pause recognition while speaking
+        if (isListening) {
+            recognition.stop();
+        }
+        isSpeaking = true;
+
+        utterance.onstart = () => {
+            micBtn.classList.add('speaking');
+        };
+
+        utterance.onend = () => {
+            isSpeaking = false;
+            micBtn.classList.remove('speaking');
+            // Resume recognition if we're still supposed to be listening
+            if (isListening) {
+                try {
+                    recognition.start();
+                } catch (error) {
+                    console.error('Error restarting speech recognition:', error);
+                }
+            }
+        };
+
+        currentUtterance = utterance;
+        synth.speak(utterance);
+    }
+
+    function addMessage(text, isUser = false) {
+        const div = document.createElement('div');
+        div.className = isUser ? 'user' : 'whiskers';
+        div.textContent = `${isUser ? 'You' : 'Whiskers'}: ${text}`;
+        chatbox.appendChild(div);
+        chatbox.scrollTop = chatbox.scrollHeight;
+
+        // Speak out Whiskers' responses
+        if (!isUser) {
+            speak(text);
+        }
+    }
+
+    function setLoading(isLoading) {
+        loading.style.display = isLoading ? 'block' : 'none';
+        stopBtn.disabled = !isLoading;
+    }
+
+    async function sendMessage(text) {
+        if (!text.trim()) return;
+        
+        addMessage(text, true);
+        setLoading(true);
         messageInput.value = '';
+        
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({message: text})
+            });
+            const data = await response.json();
+            addMessage(data.reply);
+        } catch (error) {
+            addMessage('Sorry, something went wrong. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    micBtn.addEventListener('click', () => {
+        if (!recognition) return;
+        
+        if (!isListening) {
+            try {
+                finalTranscript = '';
+                interimTranscript = '';
+                messageInput.value = '';
+                recognition.start();
+            } catch (error) {
+                console.error('Error starting speech recognition:', error);
+            }
+        } else {
+            isListening = false;
+            recognition.stop();
+        }
     });
+
+    stopBtn.addEventListener('click', () => {
+        setLoading(false);
+        if (isListening) {
+            isListening = false;
+            recognition.stop();
+        }
+        // Stop any ongoing speech
+        if (currentUtterance) {
+            synth.cancel();
+        }
+    });
+
+    clearBtn.addEventListener('click', () => {
+        chatbox.innerHTML = '';
+        // Stop any ongoing speech
+        if (currentUtterance) {
+            synth.cancel();
+        }
+    });
+
+    // Add keyboard shortcut for toggling speech recognition
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (isListening) {
+                isListening = false;
+                recognition.stop();
+            }
+            // Stop any ongoing speech
+            if (currentUtterance) {
+                synth.cancel();
+            }
+        }
+    });
+
+    // Initialize voices when they become available
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = () => {
+            // Voices are now available
+            console.log('Voices loaded:', speechSynthesis.getVoices().length);
+        };
+    }
     </script>
 </body>
 </html>

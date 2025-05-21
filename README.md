@@ -1,30 +1,66 @@
-# Kid Chat
+# Kid Chat - Whiskers the Talking Cat
 
-This is a simple Flask web application that provides a colorful chat interface for kids (ages 6-8) to talk with a friendly cat named **Whiskers**.
-
-## Features
-
-- Friendly cat emoji as the chat companion
-- "Speak" button to send a message
-- "Stop" button (currently does nothing but can be extended)
-- Colorful, kid-friendly UI
-- Uses OpenAI's `gpt-4` model to generate responses (requires `OPENAI_API_KEY` environment variable)
+A friendly chat application featuring Whiskers, a talking cat who loves chatting with children age 6-8.
 
 ## Setup
 
-1. Install dependencies:
+1. Create a virtual environment:
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
+2. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Run the application:
+3. Set up environment variables:
+Create a `.env` file in the project root with the following variables:
+```
+OPENAI_API_KEY=your_api_key_here
+FLASK_DEBUG=True
+SECRET_KEY=your_secret_key_here
+```
 
+## Running the Application
+
+1. Activate the virtual environment:
+```bash
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+2. Start the Flask server:
 ```bash
 python app.py
 ```
 
-3. Open your browser at `http://localhost:5000` to chat with Whiskers.
+3. Open your browser and navigate to `http://localhost:5000`
+
+## Features
+
+- Chat with Whiskers, a friendly cat character
+- Real-time responses using GPT-4
+- Loading indicators
+- Clear chat functionality
+- Stop button for canceling responses
+- Character limit on messages
+- Enter key support for sending messages
+
+## Development
+
+The application uses:
+- Flask for the backend
+- OpenAI API for chat responses
+- Modern CSS for styling
+- Vanilla JavaScript for interactivity
+
+## Security
+
+- API keys are stored in environment variables
+- Input validation and sanitization
+- Error handling for API failures
+- Character limits on messages
 
 ## Testing
 
