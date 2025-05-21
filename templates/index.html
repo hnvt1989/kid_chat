@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whiskers Chat</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Chat with Whiskers!</h1>
+        <div class="cat-emoji">🐱</div>
+        <div id="chatbox" class="chatbox"></div>
+        <textarea id="message" placeholder="Type your message here..."></textarea>
+        <div class="buttons">
+            <button id="speak">Speak</button>
+            <button id="stop">Stop</button>
+        </div>
+    </div>
+
+    <script>
+    const chatbox = document.getElementById('chatbox');
+    const messageInput = document.getElementById('message');
+    const speakBtn = document.getElementById('speak');
+
+    speakBtn.addEventListener('click', () => {
+        const text = messageInput.value;
+        if (!text) return;
+        chatbox.innerHTML += `<div class='user'>You: ${text}</div>`;
+        fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({message: text})
+        }).then(res => res.json()).then(data => {
+            chatbox.innerHTML += `<div class='whiskers'>Whiskers: ${data.reply}</div>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }).catch(() => {
+            chatbox.innerHTML += `<div class='whiskers'>Whiskers: Sorry, something went wrong.</div>`;
+        });
+        messageInput.value = '';
+    });
+    </script>
+</body>
+</html>
