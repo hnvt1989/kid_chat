@@ -128,21 +128,31 @@
         }
 
         const utterance = new SpeechSynthesisUtterance(text);
-        
-        // Configure voice settings
-        utterance.rate = 1.0;  // Speed
-        utterance.pitch = 1.1; // Slightly higher pitch for a more friendly sound
+
+        // Configure voice settings for a more natural sound
+        utterance.rate = 0.95;
+        utterance.pitch = 1.0;
         utterance.volume = 1.0;
 
-        // Try to find a female voice
+        // Try to select a natural-sounding voice if available
         const voices = synth.getVoices();
-        const femaleVoice = voices.find(voice => 
-            voice.name.includes('Female') || 
-            voice.name.includes('female') ||
+        const naturalVoice = voices.find(voice =>
+            voice.name.includes('Google US English') ||
+            voice.name.includes('Google UK English Female') ||
+            voice.name.includes('Microsoft Aria') ||
+            voice.name.includes('Microsoft Jenny') ||
             voice.name.includes('Samantha')
         );
-        if (femaleVoice) {
-            utterance.voice = femaleVoice;
+        if (naturalVoice) {
+            utterance.voice = naturalVoice;
+        } else {
+            const fallbackVoice = voices.find(voice =>
+                voice.name.toLowerCase().includes('female') ||
+                voice.name.includes('Samantha')
+            );
+            if (fallbackVoice) {
+                utterance.voice = fallbackVoice;
+            }
         }
 
         // Pause recognition while speaking
