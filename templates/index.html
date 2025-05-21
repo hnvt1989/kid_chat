@@ -44,6 +44,7 @@
     const synth = window.speechSynthesis;
     let currentUtterance = null;
     let isSpeaking = false;
+    let isConversationActive = false;
 
     // Check if browser supports speech recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -51,6 +52,10 @@
     let isListening = false;
     let finalTranscript = '';
     let interimTranscript = '';
+
+    function updateStopButton() {
+        stopBtn.disabled = !isConversationActive;
+    }
 
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
@@ -61,6 +66,8 @@
         recognition.onstart = () => {
             micBtn.classList.add('listening');
             isListening = true;
+            isConversationActive = true;
+            updateStopButton();
             messageInput.placeholder = "Listening...";
         };
 
@@ -105,6 +112,8 @@
             }
             micBtn.classList.remove('listening');
             isListening = false;
+            isConversationActive = false;
+            updateStopButton();
             addMessage('Sorry, I had trouble understanding you. Please try again.');
         };
     } else {
@@ -141,6 +150,8 @@
             recognition.stop();
         }
         isSpeaking = true;
+        isConversationActive = true;
+        updateStopButton();
 
         utterance.onstart = () => {
             micBtn.classList.add('speaking');
@@ -156,6 +167,9 @@
                 } catch (error) {
                     console.error('Error restarting speech recognition:', error);
                 }
+            } else {
+                isConversationActive = false;
+                updateStopButton();
             }
         };
 
@@ -178,7 +192,8 @@
 
     function setLoading(isLoading) {
         loading.style.display = isLoading ? 'block' : 'none';
-        stopBtn.disabled = !isLoading;
+        isConversationActive = isLoading;
+        updateStopButton();
     }
 
     async function sendMessage(text) {
@@ -219,20 +234,31 @@
             }
         } else {
             isListening = false;
+            isConversationActive = false;
+            updateStopButton();
             recognition.stop();
         }
     });
 
     stopBtn.addEventListener('click', () => {
-        setLoading(false);
+        // Stop speech recognition
         if (isListening) {
             isListening = false;
             recognition.stop();
         }
+        
         // Stop any ongoing speech
         if (currentUtterance) {
             synth.cancel();
         }
+        
+        // Reset states
+        isSpeaking = false;
+        isConversationActive = false;
+        setLoading(false);
+        micBtn.classList.remove('listening', 'speaking');
+        messageInput.value = '';
+        messageInput.placeholder = "Type your message here...";
     });
 
     clearBtn.addEventListener('click', () => {
@@ -241,6 +267,10 @@
         if (currentUtterance) {
             synth.cancel();
         }
+        // Reset states
+        isSpeaking = false;
+        isConversationActive = false;
+        updateStopButton();
     });
 
     // Add keyboard shortcut for toggling speech recognition
@@ -254,6 +284,10 @@
             if (currentUtterance) {
                 synth.cancel();
             }
+            // Reset states
+            isSpeaking = false;
+            isConversationActive = false;
+            updateStopButton();
         }
     });
 
