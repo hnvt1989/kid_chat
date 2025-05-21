@@ -8,7 +8,7 @@ This is a simple Flask web application that provides a colorful chat interface f
 - "Speak" button to send a message
 - "Stop" button (currently does nothing but can be extended)
 - Colorful, kid-friendly UI
-- Uses OpenAI's API to generate responses (requires `OPENAI_API_KEY` environment variable)
+- Uses OpenAI's `gpt-4` model to generate responses (requires `OPENAI_API_KEY` environment variable)
 
 ## Setup
 

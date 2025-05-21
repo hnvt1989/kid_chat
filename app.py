@@ -18,7 +18,7 @@ def chat():
         return jsonify({'error': 'No message provided'}), 400
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4",
             messages=[{'role': 'system', 'content': 'You are a friendly talking cat named Whiskers who loves chatting with children age 6-8.'},
                      {'role': 'user', 'content': user_message}],
             temperature=0.7,
