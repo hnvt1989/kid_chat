@@ -225,26 +225,32 @@
     }
 
     function speak(text) {
-        if (!text) return;
-        fetch("/tts", {
+        if (!text) return Promise.resolve();
+        return fetch("/tts", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text })
         })
         .then(r => { if (!r.ok) throw new Error("TTS request failed"); return r.blob(); })
-        .then(b => { const url = URL.createObjectURL(b); const a = new Audio(url); currentAudio = a; a.play().catch(e => console.error("Audio play error:", e)); })
-        .catch(e => console.error("TTS error:", e));
+        .then(b => {
+            const url = URL.createObjectURL(b);
+            const a = new Audio(url);
+            currentAudio = a;
+            return a.play().then(() => a);
+        })
+        .catch(e => {
+            console.error("TTS error:", e);
+        });
     }
 
-    function addMessage(text, isUser = false) {
+    function addMessage(text, isUser = false, skipTTS = false) {
         const div = document.createElement('div');
         div.className = isUser ? 'user' : 'whiskers';
         div.textContent = `${isUser ? 'You' : 'Whiskers'}: ${text}`;
         chatbox.appendChild(div);
         chatbox.scrollTop = chatbox.scrollHeight;
 
-        // Speak out Whiskers' responses
-        if (!isUser) {
+        if (!isUser && !skipTTS) {
             speak(text);
         }
     }
@@ -271,7 +277,9 @@
                 body: JSON.stringify({message: text})
             });
             const data = await response.json();
-            addMessage(data.reply);
+
+            await speak(data.reply);
+            addMessage(data.reply, false, true);
         } catch (error) {
             addMessage('Sorry, something went wrong. Please try again.');
         } finally {
