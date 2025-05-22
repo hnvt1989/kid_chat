@@ -157,28 +157,57 @@ textarea {
 }
 
 .mic-button {
-    background: #007bff;
+    background: #34c759;
     color: white;
     border: none;
     font-size: 24px;
     cursor: pointer;
-    padding: 5px;
+    padding: 0;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: background-color 0.3s;
 }
 
 .mic-button:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: #2faa4d;
 }
 
 .mic-button.speaking {
-    color: #28a745;
     animation: pulse 1.5s infinite;
 }
 
 .mic-button.listening {
-    color: #dc3545;
+    background: #ff3b30;
+    color: white;
     animation: pulse 1.5s infinite;
+}
+
+.end-call-button {
+    background: #ff3b30;
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.3s;
+}
+
+.end-call-button:hover {
+    background: #e23328;
+}
+
+.end-call-button .end-icon {
+    transform: rotate(135deg);
 }
 
 @keyframes pulse {
@@ -208,16 +237,6 @@ button {
     transition: background-color 0.3s;
 }
 
-#speak {
-    background: #28a745;
-    color: white;
-}
-
-
-#clear {
-    background: #6c757d;
-    color: white;
-}
 
 button:disabled {
     background: #ccc;

@@ -46,10 +46,16 @@
                 <textarea id="message" placeholder="Type your message here..." maxlength="200" readonly></textarea>
             </div>
             <div class="buttons">
-                <button id="mic" class="mic-button" title="Click to start/stop listening">
-                    🎙️
+                <button id="mic" class="mic-button call-button" title="Start Call">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M22 16.92v3a2.09 2.09 0 01-2.26 2.09A19.72 19.72 0 012.28 5.35 2.09 2.09 0 014.37 3h3a1 1 0 011 .75l1.09 4.41a1 1 0 01-.27 1L6.91 11.09a16 16 0 006 6l2.2-2.2a1 1 0 011-.27l4.38 1.09a1 1 0 01.75 1z"/>
+                    </svg>
                 </button>
-                <button id="clear">Clear Chat</button>
+                <button id="end-call" class="end-call-button" title="End Call">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" class="end-icon">
+                        <path d="M22 16.92v3a2.09 2.09 0 01-2.26 2.09A19.72 19.72 0 012.28 5.35 2.09 2.09 0 014.37 3h3a1 1 0 011 .75l1.09 4.41a1 1 0 01-.27 1L6.91 11.09a16 16 0 006 6l2.2-2.2a1 1 0 011-.27l4.38 1.09a1 1 0 01.75 1z"/>
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
@@ -57,8 +63,8 @@
     <script>
     const chatbox = document.getElementById('chatbox');
     const messageInput = document.getElementById('message');
-    const clearBtn = document.getElementById('clear');
     const micBtn = document.getElementById('mic');
+    const endCallBtn = document.getElementById('end-call');
     const loading = document.getElementById('loading');
     const audioPermissionMessage = document.getElementById('audio-permission');
     const animation = document.getElementById('animation');
@@ -351,15 +357,19 @@
         }
     });
 
-    clearBtn.addEventListener('click', () => {
+    endCallBtn.addEventListener('click', () => {
         chatbox.innerHTML = '';
-        // Stop any ongoing speech
         if (currentAudio) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
         }
-        // Reset states
+        if (isListening && recognition) {
+            isListening = false;
+            recognition.stop();
+        }
         isSpeaking = false;
+        micBtn.classList.remove('speaking', 'listening');
+        showAnimation('');
     });
 
     // Add keyboard shortcut for toggling speech recognition
