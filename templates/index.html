@@ -20,10 +20,10 @@
             </div>
         </div>
         <div class="chat-container">
-            <div id="chatbox" class="chatbox"></div>
             <div id="animation-container" class="animation-container">
                 <img id="animation" src="" alt="Animation" class="hidden">
             </div>
+            <div id="chatbox" class="chatbox"></div>
         </div>
         <div id="loading" class="loading" style="display: none;">
             <div class="typing-indicator">
@@ -92,10 +92,10 @@
     // Function to show the animation
     function showAnimation(animationType) {
         if (animationType === 'listening') {
-            animation.src = '/static/listening.webp';
+            animation.src = 'https://res.cloudinary.com/dirslfuqt/image/upload/v1747939398/listening_elwf3r.webp';
             animation.classList.remove('hidden');
         } else if (animationType === 'talking') {
-            animation.src = '/static/talking.webp';
+            animation.src = 'https://res.cloudinary.com/dirslfuqt/image/upload/v1747939398/talking_cuznys.webp';
             animation.classList.remove('hidden');
         } else {
             animation.classList.add('hidden');
