@@ -186,29 +186,6 @@ textarea {
     animation: pulse 1.5s infinite;
 }
 
-.end-call-button {
-    background: #ff3b30;
-    color: white;
-    border: none;
-    height: 50px;
-    border-radius: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 0 15px;
-    transition: background-color 0.3s;
-}
-
-.end-call-button:hover {
-    background: #e23328;
-}
-
-.end-call-button .end-icon {
-    transform: rotate(135deg);
-}
 
 @keyframes pulse {
     0% {
