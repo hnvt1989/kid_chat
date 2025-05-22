@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, request, jsonify
+from io import BytesIO
+from flask import Flask, render_template, request, jsonify, send_file
 from openai import OpenAI
 from config import OPENAI_API_KEY, DEBUG
 
@@ -32,6 +33,28 @@ def chat():
         print(f"Error: {str(e)}")  # Print error to console
         assistant_reply = f"Error: {str(e)}"
     return jsonify({'reply': assistant_reply})
+
+@app.route('/tts', methods=['POST'])
+def tts():
+    """Convert text to speech using OpenAI's API and return an MP3."""
+    text = request.json.get('text', '')
+    if not text:
+        return jsonify({'error': 'No text provided'}), 400
+
+    try:
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice="nova",
+            input=text
+        )
+        audio_data = response.content
+        return send_file(
+            BytesIO(audio_data),
+            mimetype='audio/mpeg'
+        )
+    except Exception as e:
+        print(f"TTS Error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=DEBUG)
