@@ -31,23 +31,17 @@
                 <button id="dismiss-audio-warning" class="audio-button secondary">Continue without Audio</button>
             </div>
         </div>
-        <div class="input-container">
-            <div class="input-wrapper">
-                <textarea id="message" placeholder="Type your message here..." maxlength="200" readonly></textarea>
-            </div>
-            <div class="buttons">
+        <div class="buttons">
                 <button id="mic" class="mic-button call-button" title="Start Call">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M22 16.92v3a2.09 2.09 0 01-2.26 2.09A19.72 19.72 0 012.28 5.35 2.09 2.09 0 014.37 3h3a1 1 0 011 .75l1.09 4.41a1 1 0 01-.27 1L6.91 11.09a16 16 0 006 6l2.2-2.2a1 1 0 011-.27l4.38 1.09a1 1 0 01.75 1z"/>
                     </svg>
                 </button>
-            </div>
         </div>
     </div>
 
     <script>
     const chatbox = document.getElementById('chatbox');
-    const messageInput = document.getElementById('message');
     const micBtn = document.getElementById('mic');
     const loading = document.getElementById('loading');
     const audioPermissionMessage = document.getElementById('audio-permission');
@@ -183,7 +177,6 @@
             isListening = true;
             showAnimation('listening');
 
-            messageInput.placeholder = "Listening...";
         };
 
         recognition.onresult = (event) => {
@@ -195,12 +188,10 @@
                 const transcript = event.results[i][0].transcript;
                 if (event.results[i].isFinal) {
                     finalTranscript = transcript;
-                    messageInput.value = finalTranscript;
                     // Automatically send the message when final transcript is received
                     sendMessage(finalTranscript);
                 } else {
                     interimTranscript += transcript;
-                    messageInput.value = interimTranscript;
                 }
             }
         };
@@ -218,7 +209,6 @@
                 }
             } else {
                 micBtn.classList.remove('listening');
-                messageInput.placeholder = "Type your message here...";
             }
         };
 
@@ -297,7 +287,6 @@
         
         addMessage(text, true);
         setLoading(true);
-        messageInput.value = '';
         
         try {
             const response = await fetch('/chat', {
@@ -345,7 +334,6 @@
 
                 finalTranscript = '';
                 interimTranscript = '';
-                messageInput.value = '';
                 recognition.start();
             } catch (error) {
                 console.error('Error starting speech recognition:', error);
