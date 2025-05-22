@@ -24,21 +24,6 @@ h1 {
     margin-bottom: 20px;
 }
 
-.cat-emoji {
-    font-size: 48px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.cat-emoji.animated {
-    animation: bounce-cat 1s infinite;
-    display: inline-block;
-}
-
-@keyframes bounce-cat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
 
 .chatbox {
     height: 400px;
