@@ -30,12 +30,11 @@
         <div class="input-container">
             <div class="input-wrapper">
                 <textarea id="message" placeholder="Type your message here..." maxlength="200" readonly></textarea>
-                <button id="mic" class="mic-button" title="Click to start/stop listening">
-                    🎤
-                </button>
             </div>
             <div class="buttons">
-                <button id="stop" disabled>Stop</button>
+                <button id="mic" class="mic-button" title="Click to start/stop listening">
+                    🎙️
+                </button>
                 <button id="clear">Clear Chat</button>
             </div>
         </div>
@@ -44,7 +43,6 @@
     <script>
     const chatbox = document.getElementById('chatbox');
     const messageInput = document.getElementById('message');
-    const stopBtn = document.getElementById('stop');
     const clearBtn = document.getElementById('clear');
     const micBtn = document.getElementById('mic');
     const loading = document.getElementById('loading');
@@ -60,7 +58,6 @@
     // Audio playback control
     let currentAudio = null;
     let isSpeaking = false;
-    let isConversationActive = false;
 
     // Check if browser supports speech recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -156,9 +153,6 @@
         }
     }, { once: true });
 
-    function updateStopButton() {
-        stopBtn.disabled = !isConversationActive;
-    }
 
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
@@ -169,8 +163,7 @@
         recognition.onstart = () => {
             micBtn.classList.add('listening');
             isListening = true;
-            isConversationActive = true;
-            updateStopButton();
+            
             messageInput.placeholder = "Listening...";
         };
 
@@ -215,8 +208,6 @@
             }
             micBtn.classList.remove('listening');
             isListening = false;
-            isConversationActive = false;
-            updateStopButton();
             addMessage('Sorry, I had trouble understanding you. Please try again.');
         };
     } else {
@@ -257,8 +248,6 @@
 
     function setLoading(isLoading) {
         loading.style.display = isLoading ? 'block' : 'none';
-        isConversationActive = isLoading;
-        updateStopButton();
     }
 
     async function sendMessage(text) {
@@ -306,32 +295,8 @@
             }
         } else {
             isListening = false;
-            isConversationActive = false;
-            updateStopButton();
             recognition.stop();
         }
-    });
-
-    stopBtn.addEventListener('click', () => {
-        // Stop speech recognition
-        if (isListening) {
-            isListening = false;
-            recognition.stop();
-        }
-        
-        // Stop any ongoing speech
-        if (currentAudio) {
-            currentAudio.pause();
-            currentAudio.currentTime = 0;
-        }
-        
-        // Reset states
-        isSpeaking = false;
-        isConversationActive = false;
-        setLoading(false);
-        micBtn.classList.remove('listening', 'speaking');
-        messageInput.value = '';
-        messageInput.placeholder = "Type your message here...";
     });
 
     clearBtn.addEventListener('click', () => {
@@ -343,8 +308,6 @@
         }
         // Reset states
         isSpeaking = false;
-        isConversationActive = false;
-        updateStopButton();
     });
 
     // Add keyboard shortcut for toggling speech recognition
@@ -361,8 +324,6 @@
             }
             // Reset states
             isSpeaking = false;
-            isConversationActive = false;
-            updateStopButton();
         }
     });
 

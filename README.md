@@ -43,7 +43,6 @@ python app.py
 - Real-time responses using GPT-4
 - Loading indicators
 - Clear chat functionality
-- Stop button for canceling responses
 - Character limit on messages
 - Enter key support for sending messages
 
