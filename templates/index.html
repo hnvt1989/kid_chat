@@ -84,6 +84,9 @@
         }
     }
 
+    // Show listening animation on page load
+    showAnimation('listening');
+
     // Show audio permission dialog for iOS devices
     if (isIOS) {
         audioPermissionMessage.style.display = 'block';
