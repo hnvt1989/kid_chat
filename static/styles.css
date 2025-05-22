@@ -298,3 +298,28 @@ button:disabled {
 .audio-button:hover {
     opacity: 0.9;
 }
+
+/* Layout container for chat and animation */
+.chat-container {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-container .chatbox {
+    flex: 1;
+}
+
+.animation-container {
+    width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.animation-container img {
+    max-width: 100%;
+}
+
+.hidden {
+    display: none;
+}
