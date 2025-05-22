@@ -9,6 +9,7 @@
 <body>
     <div class="container">
         <h1>Chat with Hailey</h1>
+        <div class="cat-emoji animated">🐱</div>
         <div id="chatbox" class="chatbox"></div>
         <div id="loading" class="loading" style="display: none;">
             <div class="typing-indicator">
@@ -19,9 +20,9 @@
         </div>
         <div id="audio-permission" style="display: none;" class="audio-permission-overlay">
             <div class="audio-permission-content">
-                <h2>Enable Audio for Whiskers</h2>
-                <p>Whiskers needs permission to speak on your device!</p>
-                <button id="enable-audio" class="audio-button">Enable Whiskers Voice</button>
+                <h2>Enable Audio for Hailey</h2>
+                <p>Hailey needs permission to speak on your device!</p>
+                <button id="enable-audio" class="audio-button">Enable Hailey Voice</button>
                 <button id="test-audio" class="audio-button">Test Audio</button>
                 <button id="dismiss-audio-warning" class="audio-button secondary">Continue without Audio</button>
             </div>
@@ -167,7 +168,7 @@
         };
 
         recognition.onresult = (event) => {
-            // Don't process results while Whiskers is speaking
+            // Don't process results while Hailey is speaking
             if (isSpeaking) return;
 
             interimTranscript = '';
@@ -186,8 +187,10 @@
         };
 
         recognition.onend = () => {
-            if (isListening && !isSpeaking) {
-                // Restart recognition if we're still supposed to be listening and not speaking
+            if (isSpeaking) {
+                return; // wait for TTS to finish
+            }
+            if (isListening) {
                 try {
                     recognition.start();
                 } catch (error) {
@@ -216,6 +219,13 @@
 
     function speak(text) {
         if (!text) return Promise.resolve();
+        isSpeaking = true;
+        micBtn.classList.add('speaking');
+
+        if (recognition && isListening) {
+            try { recognition.stop(); } catch (err) { console.error('Error stopping speech recognition:', err); }
+        }
+
         return fetch("/tts", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -226,17 +236,26 @@
             const url = URL.createObjectURL(b);
             const a = new Audio(url);
             currentAudio = a;
+            a.onended = () => {
+                isSpeaking = false;
+                micBtn.classList.remove('speaking');
+                if (recognition && isListening) {
+                    try { recognition.start(); } catch (err) { console.error('Error restarting speech recognition after TTS:', err); }
+                }
+            };
             return a.play().then(() => a);
         })
         .catch(e => {
             console.error("TTS error:", e);
+            isSpeaking = false;
+            micBtn.classList.remove('speaking');
         });
     }
 
     function addMessage(text, isUser = false, skipTTS = false) {
         const div = document.createElement('div');
         div.className = isUser ? 'user' : 'whiskers';
-        div.textContent = `${isUser ? 'You' : 'Whiskers'}: ${text}`;
+        div.textContent = `${isUser ? 'You' : 'Hailey'}: ${text}`;
         chatbox.appendChild(div);
         chatbox.scrollTop = chatbox.scrollHeight;
 
