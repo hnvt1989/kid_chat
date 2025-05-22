@@ -191,7 +191,8 @@
         recognition.onstart = () => {
             micBtn.classList.add('listening');
             isListening = true;
-            
+            showAnimation('listening');
+
             messageInput.placeholder = "Listening...";
         };
 
@@ -218,6 +219,7 @@
             if (isSpeaking) {
                 return; // wait for TTS to finish
             }
+            showAnimation('');
             if (isListening) {
                 try {
                     recognition.start();
@@ -238,6 +240,7 @@
             }
             micBtn.classList.remove('listening');
             isListening = false;
+            showAnimation('');
             addMessage('Sorry, I had trouble understanding you. Please try again.');
         };
     } else {
@@ -249,6 +252,7 @@
         if (!text) return Promise.resolve();
         isSpeaking = true;
         micBtn.classList.add('speaking');
+        showAnimation('talking');
 
         if (recognition && isListening) {
             try { recognition.stop(); } catch (err) { console.error('Error stopping speech recognition:', err); }
@@ -267,6 +271,7 @@
             a.onended = () => {
                 isSpeaking = false;
                 micBtn.classList.remove('speaking');
+                showAnimation('');
                 if (recognition && isListening) {
                     try { recognition.start(); } catch (err) { console.error('Error restarting speech recognition after TTS:', err); }
                 }
@@ -277,6 +282,7 @@
             console.error("TTS error:", e);
             isSpeaking = false;
             micBtn.classList.remove('speaking');
+            showAnimation('');
         });
     }
 
