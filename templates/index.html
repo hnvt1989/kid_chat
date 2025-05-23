@@ -33,11 +33,12 @@
             </div>
         </div>
         <div class="buttons">
-                <button id="mic" class="mic-button call-button" title="Start Call">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M22 16.92v3a2.09 2.09 0 01-2.26 2.09A19.72 19.72 0 012.28 5.35 2.09 2.09 0 014.37 3h3a1 1 0 011 .75l1.09 4.41a1 1 0 01-.27 1L6.91 11.09a16 16 0 006 6l2.2-2.2a1 1 0 011-.27l4.38 1.09a1 1 0 01.75 1z"/>
-                    </svg>
-                </button>
+            <button id="mic" class="mic-button call-button" title="Start Call">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M22 16.92v3a2.09 2.09 0 01-2.26 2.09A19.72 19.72 0 012.28 5.35 2.09 2.09 0 014.37 3h3a1 1 0 011 .75l1.09 4.41a1 1 0 01-.27 1L6.91 11.09a16 16 0 006 6l2.2-2.2a1 1 0 011-.27l4.38 1.09a1 1 0 01.75 1z"/>
+                </svg>
+            </button>
+            <button id="clear-chat" class="clear-button" title="Clear Chat">Clear Chat</button>
         </div>
     </div>
 
@@ -47,6 +48,27 @@
     const loading = document.getElementById('loading');
     const audioPermissionMessage = document.getElementById('audio-permission');
     const animation = document.getElementById('animation');
+
+    const CHAT_LIMIT = 200;
+    let chatHistory = [];
+
+    function saveChatHistory() {
+        localStorage.setItem('chatHistory', JSON.stringify(chatHistory.slice(-CHAT_LIMIT)));
+    }
+
+    function loadChatHistory() {
+        const saved = localStorage.getItem('chatHistory');
+        if (saved) {
+            try {
+                chatHistory = JSON.parse(saved);
+                chatHistory.slice(-CHAT_LIMIT).forEach(msg => {
+                    addMessage(msg.text, msg.isUser, true, false);
+                });
+            } catch (e) {
+                chatHistory = [];
+            }
+        }
+    }
 
     // Audio initialization state
     let audioInitialized = false;
@@ -282,12 +304,20 @@
         });
     }
 
-    function addMessage(text, isUser = false, skipTTS = false) {
+    function addMessage(text, isUser = false, skipTTS = false, store = true) {
         const div = document.createElement('div');
         div.className = isUser ? 'user' : 'hailey';
         div.textContent = `${isUser ? 'You' : 'Leila'}: ${text}`;
         chatbox.appendChild(div);
         chatbox.scrollTop = chatbox.scrollHeight;
+
+        if (store) {
+            chatHistory.push({ text, isUser });
+            if (chatHistory.length > CHAT_LIMIT) {
+                chatHistory = chatHistory.slice(-CHAT_LIMIT);
+            }
+            saveChatHistory();
+        }
 
         if (!isUser && !skipTTS) {
             speak(text);
@@ -339,7 +369,6 @@
     }
 
     function endCall() {
-        chatbox.innerHTML = '';
         if (currentAudio) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
@@ -375,6 +404,12 @@
         }
     });
 
+    document.getElementById('clear-chat').addEventListener('click', () => {
+        chatHistory = [];
+        saveChatHistory();
+        chatbox.innerHTML = '';
+    });
+
 
     // Add keyboard shortcut for toggling speech recognition
     document.addEventListener('keydown', (e) => {
@@ -392,6 +427,8 @@
             isSpeaking = false;
         }
     });
+
+    loadChatHistory();
 
     </script>
 </body>

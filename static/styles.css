@@ -86,6 +86,22 @@ h1 {
     animation: pulse 1.5s infinite;
 }
 
+.clear-button {
+    background: #6c757d;
+    color: white;
+    padding: 0 20px;
+    height: 50px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+
+.clear-button:hover {
+    background: #5a6268;
+}
+
 
 @keyframes pulse {
     0% {
