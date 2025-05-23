@@ -64,6 +64,16 @@
     let isListening = false;
     let finalTranscript = '';
     let interimTranscript = '';
+    let silenceTimer = null;
+
+    function resetSilenceTimer() {
+        clearTimeout(silenceTimer);
+        silenceTimer = setTimeout(() => {
+            if (isListening) {
+                endCall();
+            }
+        }, 30000); // 30 seconds
+    }
 
     // Function to show the animation
     function showAnimation(animationType) {
@@ -176,6 +186,7 @@
             micBtn.classList.add('listening');
             isListening = true;
             showAnimation('listening');
+            resetSilenceTimer();
 
         };
 
@@ -183,6 +194,7 @@
             // Don't process results while Hailey is speaking
             if (isSpeaking) return;
 
+            resetSilenceTimer();
             interimTranscript = '';
             for (let i = event.resultIndex; i < event.results.length; i++) {
                 const transcript = event.results[i][0].transcript;
@@ -200,6 +212,7 @@
             if (isSpeaking) {
                 return; // wait for TTS to finish
             }
+            clearTimeout(silenceTimer);
             showAnimation('');
             if (isListening) {
                 try {
@@ -317,6 +330,7 @@
             isListening = false;
             recognition.stop();
         }
+        clearTimeout(silenceTimer);
         isSpeaking = false;
         micBtn.classList.remove('speaking', 'listening');
         showAnimation('');
