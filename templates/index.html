@@ -201,8 +201,10 @@
                 const transcript = event.results[i][0].transcript;
                 if (event.results[i].isFinal) {
                     finalTranscript = transcript;
-                    // Automatically send the message when final transcript is received
-                    sendMessage(finalTranscript);
+                    // Automatically correct and send the message when final transcript is received
+                    correctText(finalTranscript).then(corrected => {
+                        sendMessage(corrected);
+                    });
                 } else {
                     interimTranscript += transcript;
                 }
@@ -294,6 +296,21 @@
 
     function setLoading(isLoading) {
         loading.style.display = isLoading ? 'block' : 'none';
+    }
+
+    async function correctText(text) {
+        try {
+            const response = await fetch('/correct', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text })
+            });
+            const data = await response.json();
+            return data.corrected || text;
+        } catch (error) {
+            console.error('Error correcting text:', error);
+            return text;
+        }
     }
 
     async function sendMessage(text) {
