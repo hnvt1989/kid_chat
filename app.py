@@ -56,5 +56,36 @@ def tts():
         print(f"TTS Error: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/correct', methods=['POST'])
+def correct():
+    """Use GPT to auto-correct transcribed speech text."""
+    text = request.json.get('text', '')
+    if not text:
+        return jsonify({'error': 'No text provided'}), 400
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {
+                    'role': 'system',
+                    'content': (
+                        'You are a helpful assistant that fixes mistakes in '
+                        'short phrases transcribed from speech recognition. '
+                        'Return only the corrected text.'
+                    )
+                },
+                {'role': 'user', 'content': text}
+            ],
+            temperature=0,
+            max_tokens=60,
+        )
+        corrected = response.choices[0].message.content.strip()
+        return jsonify({'corrected': corrected})
+    except Exception as e:
+        print(f"Correction Error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=DEBUG)

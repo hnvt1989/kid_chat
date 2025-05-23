@@ -45,6 +45,7 @@ python app.py
 - Clear chat functionality
 - Character limit on messages
 - Enter key support for sending messages
+- Speech recognition auto-corrects transcripts
 
 ## Development
 

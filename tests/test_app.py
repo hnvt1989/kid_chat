@@ -9,3 +9,8 @@ def test_tts_no_text():
     tester = app.test_client()
     response = tester.post('/tts', json={})
     assert response.status_code == 400
+
+def test_correct_no_text():
+    tester = app.test_client()
+    response = tester.post('/correct', json={})
+    assert response.status_code == 400
