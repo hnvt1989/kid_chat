@@ -9,6 +9,7 @@
 </head>
 <body>
     <div class="container">
+        <button id="clear-history" class="clear-button clear-history-button" title="Clear Chat">Clear Chat</button>
         <h1>Chat with Leila</h1>
         <div class="chat-container">
             <div id="animation-container" class="animation-container">
@@ -405,6 +406,12 @@
     });
 
     document.getElementById('clear-chat').addEventListener('click', () => {
+        chatHistory = [];
+        saveChatHistory();
+        chatbox.innerHTML = '';
+    });
+
+    document.getElementById('clear-history').addEventListener('click', () => {
         chatHistory = [];
         saveChatHistory();
         chatbox.innerHTML = '';

@@ -16,6 +16,7 @@ body {
     border-radius: 20px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 h1 {
@@ -101,6 +102,12 @@ h1 {
 
 .clear-button:hover {
     background: #5a6268;
+}
+
+.clear-history-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
 }
 
 
