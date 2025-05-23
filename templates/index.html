@@ -268,7 +268,7 @@
 
     function addMessage(text, isUser = false, skipTTS = false) {
         const div = document.createElement('div');
-        div.className = isUser ? 'user' : 'whiskers';
+        div.className = isUser ? 'user' : 'hailey';
         div.textContent = `${isUser ? 'You' : 'Hailey'}: ${text}`;
         chatbox.appendChild(div);
         chatbox.scrollTop = chatbox.scrollHeight;
