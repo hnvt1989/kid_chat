@@ -31,7 +31,9 @@ def chat():
                 'to understand. Use simple words and short sentences. Be '
                 'encouraging and positive. Ask questions to keep the '
                 'conversation going. Never use emojis or symbols in your '
-                'responses.'
+                'responses. Remember you are chatting with Katherine, who '
+                'is 6 years old and loves sheep, drawing, and playing '
+                'outside.'
             )
         }
     ]
