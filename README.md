@@ -21,6 +21,9 @@ Create a `.env` file in the project root with the following variables:
 OPENAI_API_KEY=your_api_key_here
 FLASK_DEBUG=True
 SECRET_KEY=your_secret_key_here
+# Optional: configure persistent memory location and size
+MEMORY_FILE=memory.json
+MEMORY_LIMIT=20
 ```
 
 ## Running the Application
@@ -45,6 +48,7 @@ python app.py
 - Clear chat functionality
 - Character limit on messages
 - Enter key support for sending messages
+- Persistent conversation memory with a configurable size limit
 
 ## Development
 
