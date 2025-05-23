@@ -9,6 +9,7 @@
 </head>
 <body>
     <div class="container">
+        <button id="clear-chat" class="clear-chat-button" title="Clear Chat">Clear</button>
         <h1>Chat with Leila</h1>
         <div class="chat-container">
             <div id="animation-container" class="animation-container">
@@ -44,6 +45,7 @@
     <script>
     const chatbox = document.getElementById('chatbox');
     const micBtn = document.getElementById('mic');
+    const clearBtn = document.getElementById('clear-chat');
     const loading = document.getElementById('loading');
     const audioPermissionMessage = document.getElementById('audio-permission');
     const animation = document.getElementById('animation');
@@ -373,6 +375,10 @@
         } else {
             endCall();
         }
+    });
+
+    clearBtn.addEventListener('click', () => {
+        endCall();
     });
 
 
