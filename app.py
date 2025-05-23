@@ -9,6 +9,8 @@ app = Flask(__name__)
 # Initialize OpenAI client
 client = OpenAI(api_key=OPENAI_API_KEY)
 
+HISTORY_LIMIT = 20
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -16,15 +18,36 @@ def index():
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.json.get('message', '')
+    history = request.json.get('history', [])
     if not user_message:
         return jsonify({'error': 'No message provided'}), 400
+
+    messages = [
+        {
+            'role': 'system',
+            'content': (
+                'You are Leila, an energetic sheep who loves to chat with '
+                'children ages 6-7. Keep your replies short, fun, and easy '
+                'to understand. Use simple words and short sentences. Be '
+                'encouraging and positive. Ask questions to keep the '
+                'conversation going. Never use emojis or symbols in your '
+                'responses.'
+            )
+        }
+    ]
+
+    if isinstance(history, list):
+        for msg in history[-HISTORY_LIMIT:]:
+            role = 'user' if msg.get('isUser') else 'assistant'
+            text = msg.get('text', '')
+            messages.append({'role': role, 'content': text})
+
+    messages.append({'role': 'user', 'content': user_message})
+
     try:
         response = client.chat.completions.create(
             model="gpt-4",
-            messages=[
-                {'role': 'system', 'content': 'You are Leila, an energetic sheep who loves to chat with children ages 6-7. Keep your replies short, fun, and easy to understand. Use simple words and short sentences. Be encouraging and positive. Ask questions to keep the conversation going. Never use emojis or symbols in your responses.'},
-                {'role': 'user', 'content': user_message}
-            ],
+            messages=messages,
             temperature=0.7,
             max_tokens=60,
         )
