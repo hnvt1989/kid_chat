@@ -11,4 +11,4 @@ if not OPENAI_API_KEY:
 
 # Flask Configuration
 DEBUG = os.getenv("FLASK_DEBUG", "True").lower() == "true"
-SECRET_KEY = os.getenv("SECRET_KEY", "dev") 
+SECRET_KEY = os.getenv("SECRET_KEY", "dev")
