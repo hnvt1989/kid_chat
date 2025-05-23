@@ -50,6 +50,7 @@
     const animation = document.getElementById('animation');
 
     const CHAT_LIMIT = 200;
+    const HISTORY_SEND_LIMIT = 20;
     let chatHistory = [];
 
     function saveChatHistory() {
@@ -345,17 +346,19 @@
 
     async function sendMessage(text) {
         if (!text.trim()) return;
-        
+
         addMessage(text, true);
         setLoading(true);
-        
+
+        const historyToSend = chatHistory.slice(Math.max(0, chatHistory.length - HISTORY_SEND_LIMIT - 1), -1);
+
         try {
             const response = await fetch('/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({message: text})
+                body: JSON.stringify({message: text, history: historyToSend})
             });
             const data = await response.json();
 
