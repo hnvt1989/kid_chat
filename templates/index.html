@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with Hailey</title>
+    <title>Chat with Leila</title>
     <link rel="stylesheet" href="/static/styles.css">
     <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
 </head>
 <body>
     <div class="container">
-        <h1>Chat with Hailey</h1>
+        <h1>Chat with Leila</h1>
         <div class="chat-container">
             <div id="animation-container" class="animation-container">
                 <img id="animation" src="" alt="Animation" class="hidden">
@@ -26,8 +26,8 @@
         <div id="audio-permission" style="display: none;" class="audio-permission-overlay">
             <div class="audio-permission-content">
                 <h2>Enable Audio for Leila</h2>
-                <p>Hailey needs permission to speak on your device!</p>
-                <button id="enable-audio" class="audio-button">Enable Hailey Voice</button>
+                <p>Leila needs permission to speak on your device!</p>
+                <button id="enable-audio" class="audio-button">Enable Leila Voice</button>
                 <button id="test-audio" class="audio-button">Test Audio</button>
                 <button id="dismiss-audio-warning" class="audio-button secondary">Continue without Audio</button>
             </div>
@@ -192,7 +192,7 @@
         };
 
         recognition.onresult = (event) => {
-            // Don't process results while Hailey is speaking
+            // Don't process results while Leila is speaking
             if (isSpeaking) return;
 
             resetSilenceTimer();
@@ -285,7 +285,7 @@
     function addMessage(text, isUser = false, skipTTS = false) {
         const div = document.createElement('div');
         div.className = isUser ? 'user' : 'hailey';
-        div.textContent = `${isUser ? 'You' : 'Hailey'}: ${text}`;
+        div.textContent = `${isUser ? 'You' : 'Leila'}: ${text}`;
         chatbox.appendChild(div);
         chatbox.scrollTop = chatbox.scrollHeight;
 

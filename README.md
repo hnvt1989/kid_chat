@@ -1,6 +1,6 @@
-# Kid Chat - Hailey the Energetic Sheep
+# Kid Chat - Leila the Energetic Sheep
 
-A friendly chat application featuring Hailey, an energetic sheep who chats with children ages 6-7 using short, fun, and upbeat messages.
+A friendly chat application featuring Leila, an energetic sheep who chats with children ages 6-7 using short, fun, and upbeat messages.
 
 ## Setup
 
@@ -39,7 +39,7 @@ python app.py
 
 ## Features
 
-- Chat with Hailey, an energetic sheep character
+- Chat with Leila, an energetic sheep character
 - Real-time responses using GPT-4
 - Loading indicators
 - Clear chat functionality
@@ -72,4 +72,4 @@ pytest
 
 ## Notes
 
-The application attempts to use OpenAI's API. If no API key is provided or the request fails, Hailey will reply with a default error message.
+The application attempts to use OpenAI's API. If no API key is provided or the request fails, Leila will reply with a default error message.
